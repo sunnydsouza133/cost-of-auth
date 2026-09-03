@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
 <title>What Prior Auth Write-offs Cost | Magical</title>
 <meta name="description" content="The three ways prior-auth write-offs happen, and what closing each one is worth. Run the numbers with your own denial report.">
@@ -14,30 +15,13 @@
 
 <style>
   :root{
+    color-scheme:light;
     --paper:#F5F5F5; --card:#FFFFFF; --ink:#1F1E1D; --ink-soft:#3E3D3C; --ink-faint:#6E6D6B;
-    --rule:#E0E0E0; --blue:#0000EE; --blue-soft:#EDEDFF; --lime:#CCF67E; --lime-ink:#1F2E0A;
+    --rule:#E0E0E0; --blue:#0000EE; --blue-soft:#EDEDFF;
     --warn:#9A4A00; --warn-soft:#F6EADF;
     --gain:#2F5416; --gain-soft:#EAF2DE; --gain-bar:#7BA455;
     --cta-bg:#17171B; --cta-panel:#24242C; --cta-fg:#FFFFFF; --cta-muted:#C9C9D2; --cta-accent:#CCF67E; --cta-edge:#2E2E38;
     --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 22px -16px rgba(0,0,0,.18);
-  }
-  @media (prefers-color-scheme:dark){
-    :root:not([data-theme="light"]){
-      --paper:#121212; --card:#1B1B1B; --ink:#F1F0EE; --ink-soft:#C9C7C4; --ink-faint:#8F8D8A;
-      --rule:#2C2C2C; --blue:#8A8AFF; --blue-soft:#191934; --lime:#CCF67E; --lime-ink:#1F2E0A;
-      --warn:#E39A6B; --warn-soft:#2E211A;
-      --gain:#B5D98F; --gain-soft:#1E2916; --gain-bar:#86B25C;
-      --cta-bg:#1B1B2E; --cta-panel:#26263F; --cta-fg:#FFFFFF; --cta-muted:#C2C2D4; --cta-accent:#CCF67E; --cta-edge:#36364F;
-      --shadow:0 1px 2px rgba(0,0,0,.5),0 8px 22px -16px rgba(0,0,0,.9);
-    }
-  }
-  :root[data-theme="dark"]{
-    --paper:#121212; --card:#1B1B1B; --ink:#F1F0EE; --ink-soft:#C9C7C4; --ink-faint:#8F8D8A;
-    --rule:#2C2C2C; --blue:#8A8AFF; --blue-soft:#191934; --lime:#CCF67E; --lime-ink:#1F2E0A;
-    --warn:#E39A6B; --warn-soft:#2E211A;
-    --gain:#B5D98F; --gain-soft:#1E2916; --gain-bar:#86B25C;
-    --cta-bg:#1B1B2E; --cta-panel:#26263F; --cta-fg:#FFFFFF; --cta-muted:#C2C2D4; --cta-accent:#CCF67E; --cta-edge:#36364F;
-    --shadow:0 1px 2px rgba(0,0,0,.5),0 8px 22px -16px rgba(0,0,0,.9);
   }
   *{box-sizing:border-box}
   body{background:var(--paper);color:var(--ink);font-family:"Schibsted Grotesk",-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;margin:0;-webkit-font-smoothing:antialiased}
