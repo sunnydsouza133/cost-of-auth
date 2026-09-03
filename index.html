@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>What Prior Auth Write-offs Cost | Magical</title>
+<meta name="description" content="The three ways prior-auth write-offs happen, and what closing each one is worth. Run the numbers with your own denial report.">
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alike&family=Schibsted+Grotesk:wght@400;500;600&display=swap">
+
+<style>
+  :root{
+    --paper:#F5F5F5; --card:#FFFFFF; --ink:#1F1E1D; --ink-soft:#3E3D3C; --ink-faint:#6E6D6B;
+    --rule:#E0E0E0; --blue:#0000EE; --blue-soft:#EDEDFF; --lime:#CCF67E; --lime-ink:#1F2E0A;
+    --warn:#9A4A00; --warn-soft:#F6EADF;
+    --gain:#2F5416; --gain-soft:#EAF2DE; --gain-bar:#7BA455;
+    --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 22px -16px rgba(0,0,0,.18);
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#121212; --card:#1B1B1B; --ink:#F1F0EE; --ink-soft:#C9C7C4; --ink-faint:#8F8D8A;
+      --rule:#2C2C2C; --blue:#8A8AFF; --blue-soft:#191934; --lime:#CCF67E; --lime-ink:#1F2E0A;
+      --warn:#E39A6B; --warn-soft:#2E211A;
+      --gain:#B5D98F; --gain-soft:#1E2916; --gain-bar:#86B25C;
+      --shadow:0 1px 2px rgba(0,0,0,.5),0 8px 22px -16px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#121212; --card:#1B1B1B; --ink:#F1F0EE; --ink-soft:#C9C7C4; --ink-faint:#8F8D8A;
+    --rule:#2C2C2C; --blue:#8A8AFF; --blue-soft:#191934; --lime:#CCF67E; --lime-ink:#1F2E0A;
+    --warn:#E39A6B; --warn-soft:#2E211A;
+    --gain:#B5D98F; --gain-soft:#1E2916; --gain-bar:#86B25C;
+    --shadow:0 1px 2px rgba(0,0,0,.5),0 8px 22px -16px rgba(0,0,0,.9);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);font-family:"Schibsted Grotesk",-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.55;margin:0;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:42px 28px 60px;display:flex;flex-direction:column;gap:22px}
+  .eyebrow{font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);margin:0 0 10px}
+  h1{font-family:Alike,Georgia,serif;font-weight:400;font-size:clamp(1.9rem,4.5vw,2.5rem);line-height:1.12;margin:0 0 10px;text-wrap:balance}
+  h2{font-family:Alike,Georgia,serif;font-weight:400;font-size:1.25rem;margin:0}
+  h3{font-family:Alike,Georgia,serif;font-weight:400;font-size:1.05rem;line-height:1.3;margin:0}
+  p{margin:0}
+  .lead{color:var(--ink-soft);font-size:1.05rem}
+  .hero{display:grid;grid-template-columns:1.15fr 1fr;gap:26px;align-items:center}
+  .frame{border-left:3px solid var(--blue);padding:4px 0 4px 18px}
+  .frame p{color:var(--ink-soft);font-size:.95rem}
+  .frame b{color:var(--ink);font-weight:600}
+  .pipe-intro{color:var(--ink-soft);font-size:.95rem;max-width:88ch}
+  .pipe-intro b{color:var(--ink);font-weight:600}
+
+  .pipe{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,auto);gap:10px 26px}
+  .col{display:grid;grid-template-rows:auto auto 1fr auto;gap:10px}
+  @supports (grid-template-rows:subgrid){
+    .col{grid-template-rows:subgrid;grid-row:span 4}
+  }
+  .station{font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+  .leak{background:var(--card);border:1px solid var(--rule);border-radius:6px;box-shadow:var(--shadow);padding:16px 17px;display:flex;flex-direction:column;gap:9px}
+  .leak h3{margin-bottom:2px}
+  .lstep{background:var(--paper);border:1px solid var(--rule);border-radius:5px;padding:8px 11px;font-size:.88rem;color:var(--ink-soft)}
+  .larr{text-align:center;color:var(--ink-faint);font-size:.78rem;line-height:.6}
+  .wo{background:var(--warn-soft);color:var(--warn);border-radius:5px;padding:8px 11px;font-size:.88rem;font-weight:600;margin-top:auto}
+  .wo small{display:block;font-weight:400;font-size:.78rem;margin-top:1px}
+  .fix{background:var(--blue-soft);border-radius:6px;padding:13px 15px;font-size:.9rem;color:var(--ink)}
+  .fix .lab{display:block;font-size:.68rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--blue);margin-bottom:5px}
+  .ret{background:var(--gain-soft);border-radius:6px;padding:12px 14px}
+  .ret .rlab{display:block;font-size:.65rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px;color:var(--gain);opacity:.85}
+  .rmath{display:flex;flex-direction:column;gap:4px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--rule)}
+  .rrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:.78rem;color:var(--ink-soft)}
+  .rrow b{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ret .rv{font-family:Alike,Georgia,serif;font-size:1.35rem;line-height:1.15;color:var(--gain);font-variant-numeric:tabular-nums}
+  .ret .rl{font-size:.79rem;color:var(--ink-soft);line-height:1.45;margin-top:4px}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .stat{background:var(--card);border:1px solid var(--rule);border-radius:6px;box-shadow:var(--shadow);padding:14px 16px}
+  .stat .v{font-family:Alike,Georgia,serif;font-size:1.5rem;color:var(--ink);font-variant-numeric:tabular-nums}
+  .stat .l{font-size:.82rem;color:var(--ink-faint);line-height:1.4;margin-top:3px}
+  .stat.gain{background:var(--gain-soft);border-color:transparent}
+  .stat.gain .v,.stat.gain .l{color:var(--gain)}
+  .band{display:grid;grid-template-columns:1fr 1.1fr;gap:22px;align-items:stretch}
+  .proofcard{background:var(--card);border:1px solid var(--rule);border-radius:6px;box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-direction:column;gap:10px}
+  .big{font-family:Alike,Georgia,serif;font-size:2.5rem;line-height:1;color:var(--blue);font-variant-numeric:tabular-nums}
+  .proofcard p{color:var(--ink-soft);font-size:.95rem}
+  .calc{background:var(--card);border:1px solid var(--rule);border-radius:6px;box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-direction:column;gap:13px}
+  .calc .hint{color:var(--ink-soft);font-size:.92rem}
+  .fields{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .field{display:flex;flex-direction:column;gap:4px}
+  .field label{font-size:.9rem;font-weight:500}
+  .field small{font-size:.76rem;color:var(--ink-faint)}
+  .field input{font-family:Alike,Georgia,serif;font-size:1.1rem;padding:9px 11px;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+  .field input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .rows{border-top:2px solid var(--ink);padding-top:14px;margin-top:auto;display:flex;flex-direction:column;gap:13px}
+  .row{display:flex;flex-direction:column;gap:5px}
+  .row .line{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .row .k{font-weight:500;font-size:.92rem}
+  .row .k small{display:block;font-weight:400;color:var(--ink-faint);font-size:.77rem}
+  .row .amt{font-family:Alike,Georgia,serif;font-size:1.15rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .row.loss .amt{color:var(--warn)}
+  .row.gain .amt{color:var(--gain)}
+  .track{height:10px;border-radius:99px;background:var(--paper);border:1px solid var(--rule);overflow:hidden}
+  .fill{height:100%;border-radius:99px;background:var(--gain-bar);width:0}
+  .row.loss .fill{background:var(--warn)}
+  .row.total{border-top:1px solid var(--rule);padding-top:12px}
+  .row.total .k{font-weight:600;font-size:.98rem}
+  .row.total .amt{background:var(--gain-soft);color:var(--gain);font-size:clamp(1.35rem,3vw,1.7rem);padding:2px 11px;border-radius:4px}
+  .proof{display:flex;flex-wrap:wrap;gap:7px}
+  .proof span{font-size:.78rem;padding:5px 10px;border:1px solid var(--rule);border-radius:999px;color:var(--ink-faint)}
+  .cta{background:var(--ink);color:#fff;padding:24px 26px;border-radius:6px;display:grid;grid-template-columns:1.4fr 1fr;gap:20px;align-items:center}
+  .cta h2{color:#fff;margin-bottom:8px}.cta p{color:rgba(255,255,255,.84);font-size:.96rem}
+  .cta .line{font-family:Alike,Georgia,serif;font-size:1.15rem;color:var(--lime)}
+  .src{font-size:.75rem;color:var(--ink-faint);line-height:1.5;max-width:100ch}
+  @media (max-width:820px){
+    .wrap{padding:32px 16px 50px;gap:18px}
+    .hero,.band,.cta{grid-template-columns:1fr}
+    .pipe{grid-template-columns:1fr;grid-template-rows:none}
+    .col{grid-template-rows:auto;grid-row:auto}
+    .stats{grid-template-columns:1fr}
+    .fields{grid-template-columns:1fr}
+    .calc,.proofcard{padding:18px 16px}
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="hero">
+    <header>
+      <p class="eyebrow">Prior authorization</p>
+      <h1>Three ways auth write-offs happen</h1>
+      <p class="lead">And how we can solve each one.</p>
+    </header>
+    <div class="frame">
+      <p><b>Why these never come back.</b> About 85% of payers allow no retro authorization, and the rest give you a few days. A contractual denial cannot be billed to the patient. Everything has to happen before the claim goes out.</p>
+    </div>
+  </div>
+
+  <p class="pipe-intro"><b>The fixes below are done by an AI we built.</b> It signs into the same payer and UM portals your team uses, like a new employee would, and does this work itself. No integration project, no API build.</p>
+
+  <div class="pipe">
+
+    <div class="col">
+      <span class="station">Scenario 1</span>
+      <div class="leak">
+        <h3>The portal said no auth was needed</h3>
+        <div class="lstep">Your team checks the portal. It says none required.</div>
+        <div class="larr">&darr;</div>
+        <div class="lstep">The case goes ahead. Nothing is written down.</div>
+        <div class="larr">&darr;</div>
+        <div class="lstep">Months later the claim denies for that exact auth (CARC 197).</div>
+        <div class="larr">&darr;</div>
+        <div class="wo">Write-off<small>No retro auth, and the patient cannot be billed.</small></div>
+      </div>
+      <div class="fix">
+        <span class="lab">How we solve it</span>
+        The AI checks whether the plan requires an auth before every single case, reading the plan's own current policy the way your team would. When one is needed, it builds and submits the request itself, straight from the chart, and saves the answer with the case.
+      </div>
+      <div class="ret">
+        <span class="rlab">The return</span>
+        <div class="rmath">
+          <div class="rrow"><span>50,000 auths a year, manual at $12.88</span><b>$644K</b></div>
+          <div class="rrow"><span>The same auths, electronic at $5.38</span><b>$269K</b></div>
+        </div>
+        <div class="rv">Saving you $375K a year</div>
+        <div class="rl">on handling alone. The calculator below runs your volume.</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <span class="station">Scenario 2</span>
+      <div class="leak">
+        <h3>The request went to the payer, not the reviewer</h3>
+        <div class="lstep">The request goes to the payer on the card.</div>
+        <div class="larr">&darr;</div>
+        <div class="lstep">But EviCore, Carelon, TurningPoint or Magellan actually reviews that service.</div>
+        <div class="larr">&darr;</div>
+        <div class="lstep">It sits in the wrong queue until the date of service arrives.</div>
+        <div class="larr">&darr;</div>
+        <div class="wo">Write-off<small>The service happened without an approved auth.</small></div>
+      </div>
+      <div class="fix">
+        <span class="lab">How we solve it</span>
+        The AI works out which company reviews that service for that plan and files the request there directly, in whichever portal that is. It tracks the request to a determination, and flags your team if the reviewer needs more.
+      </div>
+      <div class="ret">
+        <span class="rlab">The return</span>
+        <div class="rv">3x the working hours</div>
+        <div class="rl">the queue is worked 24 hours a day instead of one shift.</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <span class="station">Scenario 3</span>
+      <div class="leak">
+        <h3>The auth was approved but did not match the claim</h3>
+        <div class="lstep">The auth is approved and sitting on file.</div>
+        <div class="larr">&darr;</div>
+        <div class="lstep">The claim bills different codes, dates or units.</div>
+        <div class="larr">&darr;</div>
+        <div class="lstep">Denied anyway. An approval is not a guarantee of payment.</div>
+        <div class="larr">&darr;</div>
+        <div class="wo">Write-off<small>Or rework, weeks later, if someone catches it.</small></div>
+      </div>
+      <div class="fix">
+        <span class="lab">How we solve it</span>
+        Before the claim goes out, the AI reads the approval letter for the exact codes, dates and units that were approved, and checks the claim against it. Mismatches get fixed before the payer ever sees them.
+      </div>
+      <div class="ret">
+        <span class="rlab">The return</span>
+        <div class="rv">Minutes, not weeks</div>
+        <div class="rl">fixed before submission, not fought after a denial.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="v">15 to 25</div><div class="l">auths a person typically gets through in a day</div></div>
+    <div class="stat"><div class="v">60%</div><div class="l">of prior auths are still handled manually</div></div>
+    <div class="stat gain"><div class="v">58% cheaper</div><div class="l">per auth, moving from manual to electronic handling: $12.88 down to $5.38 on CAQH's own numbers, $7.50 back on every auth</div></div>
+  </div>
+
+  <div class="band">
+    <div class="proofcard">
+      <h2>What this looks like in practice</h2>
+      <div class="big">$1.4M</div>
+      <p>One Florida cardiology service line was writing off $1.4 million a year to prior auth, across just three payers and one physician. That is where we started with them: our AI running auth for those three payers, extending into eligibility and denials next.</p>
+    </div>
+    <div class="calc">
+      <h2>What it is worth to you</h2>
+      <p class="hint">Three numbers of yours. Rough is fine; the math only uses what you enter.</p>
+      <div class="fields">
+        <div class="field">
+          <label for="denials">No-auth denials a month</label>
+          <small>CARC 197, last six months, divided by six</small>
+          <input type="number" id="denials" min="0" step="10" value="150">
+        </div>
+        <div class="field">
+          <label for="avg">Average write-off per denial</label>
+          <small>From the same report</small>
+          <input type="number" id="avg" min="0" step="50" value="900">
+        </div>
+        <div class="field">
+          <label for="auths">Prior auths a year</label>
+          <small>Surgery, imaging, infusion, therapy</small>
+          <input type="number" id="auths" min="0" step="5000" value="50000">
+        </div>
+      </div>
+      <div class="rows">
+        <div class="row loss">
+          <div class="line"><div class="k">Leaking today<small>written off a year, not recoverable</small></div><div class="amt" id="total">$1.6M</div></div>
+          <div class="track"><div class="fill" id="bTotal"></div></div>
+        </div>
+        <div class="row gain">
+          <div class="line"><div class="k">Denials prevented<small>if a third of those write-offs never happen</small></div><div class="amt" id="kept">$540K</div></div>
+          <div class="track"><div class="fill" id="bKept"></div></div>
+        </div>
+        <div class="row gain">
+          <div class="line"><div class="k">Handling, manual to electronic<small>your auth volume at CAQH's $7.50 gap</small></div><div class="amt" id="handling">$375K</div></div>
+          <div class="track"><div class="fill" id="bHand"></div></div>
+        </div>
+        <div class="row total">
+          <div class="line"><div class="k">Back on your books, every year</div><div class="amt" id="table">$915K</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="proof">
+    <span>A+ from KLAS, June 2026</span>
+    <span>Becker's 2026 Top RCM Companies</span>
+    <span>Headspace &middot; SonderMind &middot; Ideal Eye Surgery</span>
+    <span>No code list. No payer network to join.</span>
+  </div>
+
+  <div class="cta">
+    <div>
+      <h2>Worth twenty minutes?</h2>
+      <p>Bring your last six months of CARC 197 denials and we will walk back which of the three leaks is costing you the most, and what closing it takes. If your workflow is already tight, we will say so.</p>
+    </div>
+    <p class="line">Reply with a day that works and we will set it up.</p>
+  </div>
+
+  <p class="src">Retro authorization availability, UM vendor routing, the approval-does-not-guarantee-payment rule, round-the-clock operation, and the 15 to 25 auths per person per day figure are from Magical's RCM workflow reference. Manual and electronic per-auth costs are the 2024 CAQH Index; the 58% reduction and the $644K, $269K, $7.50 and $375K figures all derive from those two published costs, with dollar totals at an assumed 50,000 auths a year; they are an industry benchmark rather than a Magical price. The share of authorizations still handled manually is CAQH. CARC 197 is the X12 code for authorization absent. The cardiology figure is the write-off exposure at a current Magical engagement, unnamed at the customer's discretion; it is the size of the problem we were brought in on, not a result to date. KLAS A+ likelihood to recommend, June 2026. Customer names shown are published case studies. The "third prevented" line is an illustration, not a guarantee; the calculator uses only the numbers you enter.</p>
+</div>
+
+<script>
+(function(){
+  var d=document.getElementById('denials'), a=document.getElementById('avg'), au=document.getElementById('auths');
+  function money(n){ if(!isFinite(n)||n<0)n=0; if(n>=1e6)return '$'+(n/1e6).toFixed(1).replace(/\.0$/,'')+'M'; if(n>=1e3)return '$'+Math.round(n/1e3)+'K'; return '$'+Math.round(n); }
+  function pct(v,scale){ if(!scale||v<=0)return '0%'; return Math.max(3,Math.round(v/scale*100))+'%'; }
+  function render(){
+    var wo=(parseFloat(d.value)||0)*(parseFloat(a.value)||0)*12;
+    var kept=wo/3;
+    var hand=(parseFloat(au.value)||0)*7.5;
+    var back=kept+hand;
+    var scale=Math.max(wo,back);
+    document.getElementById('total').textContent=money(wo);
+    document.getElementById('kept').textContent=money(kept);
+    document.getElementById('handling').textContent=money(hand);
+    document.getElementById('table').textContent=money(back);
+    document.getElementById('bTotal').style.width=pct(wo,scale);
+    document.getElementById('bKept').style.width=pct(kept,scale);
+    document.getElementById('bHand').style.width=pct(hand,scale);
+  }
+  d.addEventListener('input',render); a.addEventListener('input',render); au.addEventListener('input',render); render();
+})();
+</script>
+</body>
+</html>
